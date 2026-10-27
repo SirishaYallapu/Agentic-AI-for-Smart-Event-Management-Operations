@@ -1,0 +1,181 @@
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;{% block title %}EventOps AI{% endblock %}&lt;/title&gt;
+&lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css&quot;
+rel=&quot;stylesheet&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-
+icons.css&quot;&gt;
+&lt;!-- Custom styles --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#39;static&#39;, filename=&#39;css/style.css&#39;) }}&quot;&gt;
+&lt;!-- Chart.js for admin charts --&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/chart.js&quot;&gt;&lt;/script&gt;
+{% block extra_css %}{% endblock %}
+&lt;/head&gt;
+&lt;body&gt;
+&lt;!-- ====== NAVBAR ====== --&gt;
+&lt;nav class=&quot;navbar navbar-expand-lg navbar-dark bg-primary shadow-sm&quot;&gt;
+&lt;div class=&quot;container-fluid&quot;&gt;
+&lt;a class=&quot;navbar-brand fw-bold&quot; href=&quot;{{ url_for(&#39;index&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-robot&quot;&gt;&lt;/i&gt; EventOps AI
+&lt;/a&gt;
+&lt;button class=&quot;navbar-toggler&quot; type=&quot;button&quot; data-bs-toggle=&quot;collapse&quot; data-bs-
+target=&quot;#navbarNav&quot;&gt;
+&lt;span class=&quot;navbar-toggler-icon&quot;&gt;&lt;/span&gt;
+&lt;/button&gt;
+&lt;div class=&quot;collapse navbar-collapse&quot; id=&quot;navbarNav&quot;&gt;
+&lt;ul class=&quot;navbar-nav ms-auto align-items-lg-center&quot;&gt;
+{% if current_user.is_authenticated %}
+&lt;!-- Dashboard --&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;dashboard&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-speedometer2&quot;&gt;&lt;/i&gt; Dashboard
+&lt;/a&gt;
+&lt;/li&gt;
+&lt;!-- Assistant --&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;assistant_page&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-robot&quot;&gt;&lt;/i&gt; Assistant
+&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;index&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-house&quot;&gt;&lt;/i&gt; Home
+&lt;/a&gt;
+&lt;/li&gt;
+
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;feedback_list&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-star&quot;&gt;&lt;/i&gt; My Feedback
+&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;contact&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-envelope&quot;&gt;&lt;/i&gt; Contact
+&lt;/a&gt;
+&lt;/li&gt;
+&lt;!-- Admin Dropdown (only for admins) --&gt;
+{% if current_user.role == &#39;admin&#39; %}
+&lt;li class=&quot;nav-item dropdown&quot;&gt;
+&lt;a class=&quot;nav-link dropdown-toggle&quot; href=&quot;#&quot; role=&quot;button&quot; data-bs-
+toggle=&quot;dropdown&quot;&gt;
+&lt;i class=&quot;bi bi-grid&quot;&gt;&lt;/i&gt; Admin
+&lt;/a&gt;
+&lt;ul class=&quot;dropdown-menu dropdown-menu-end shadow&quot;&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;{{ url_for(&#39;admin_events&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-calendar-event&quot;&gt;&lt;/i&gt; Events&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;{{ url_for(&#39;admin_registrations&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-people&quot;&gt;&lt;/i&gt; Registrations&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;{{ url_for(&#39;admin_venues&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-building&quot;&gt;&lt;/i&gt; Venues&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;{{ url_for(&#39;admin_speakers&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-mic&quot;&gt;&lt;/i&gt; Speakers&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;{{ url_for(&#39;admin_sponsorships&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-trophy&quot;&gt;&lt;/i&gt; Sponsorships&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;{{ url_for(&#39;admin_incidents&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-exclamation-triangle&quot;&gt;&lt;/i&gt; Incidents&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;{{ url_for(&#39;admin_intelligence&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-graph-up&quot;&gt;&lt;/i&gt; Intelligence&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;{{ url_for(&#39;admin_notifications&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-bell&quot;&gt;&lt;/i&gt; Notifications&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;{{ url_for(&#39;admin_feedback&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-star&quot;&gt;&lt;/i&gt; Feedback&lt;/a&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+{% endif %}
+
+&lt;!-- Notification Bell (placeholder) --&gt;
+&lt;li class=&quot;nav-item position-relative me-2&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;#&quot; title=&quot;Notifications&quot; data-bs-toggle=&quot;dropdown&quot;&gt;
+&lt;i class=&quot;bi bi-bell fs-5&quot;&gt;&lt;/i&gt;
+&lt;span class=&quot;position-absolute top-0 start-100 translate-middle badge rounded-
+pill bg-danger&quot; style=&quot;font-size:0.6rem;&quot;&gt;
+0
+&lt;/span&gt;
+&lt;/a&gt;
+&lt;ul class=&quot;dropdown-menu dropdown-menu-end shadow&quot; style=&quot;min-
+width:260px;&quot;&gt;
+&lt;li&gt;&lt;h6 class=&quot;dropdown-header&quot;&gt;Notifications&lt;/h6&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item text-muted&quot; href=&quot;#&quot;&gt;No new notifications&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;hr class=&quot;dropdown-divider&quot;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;dropdown-item text-center&quot; href=&quot;{{ url_for(&#39;admin_notifications&#39;)
+}}&quot;&gt;View all&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;!-- User Profile --&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;profile&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-person-circle&quot;&gt;&lt;/i&gt; {{ current_user.name }}
+&lt;/a&gt;
+&lt;/li&gt;
+&lt;!-- Logout --&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;logout&#39;) }}&quot;&gt;
+&lt;i class=&quot;bi bi-box-arrow-right&quot;&gt;&lt;/i&gt; Logout
+&lt;/a&gt;
+&lt;/li&gt;
+{% else %}
+&lt;!-- Public links --&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;index&#39;) }}&quot;&gt;Home&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;login&#39;) }}&quot;&gt;Login&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;register&#39;) }}&quot;&gt;Register&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;contact&#39;) }}&quot;&gt;Contact&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class=&quot;nav-item&quot;&gt;
+&lt;a class=&quot;nav-link&quot; href=&quot;{{ url_for(&#39;about&#39;) }}&quot;&gt;About&lt;/a&gt;
+
+&lt;/li&gt;
+{% endif %}
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/nav&gt;
+&lt;!-- ====== MAIN CONTENT ====== --&gt;
+&lt;main class=&quot;container-fluid py-4&quot;&gt;
+&lt;!-- Flash messages --&gt;
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+&lt;div class=&quot;alert alert-{{ category if category != &#39;error&#39; else &#39;danger&#39; }} alert-dismissible
+fade show&quot;&gt;
+{{ message }}
+&lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot;&gt;&lt;/button&gt;
+&lt;/div&gt;
+{% endfor %}
+{% endif %}
+{% endwith %}
+&lt;!-- Page content --&gt;
+{% block content %}{% endblock %}
+&lt;/main&gt;
+&lt;!-- ====== FOOTER ====== --&gt;
+&lt;footer class=&quot;footer bg-dark text-white py-3 mt-4&quot;&gt;
+&lt;div class=&quot;container text-center&quot;&gt;
+&lt;span&gt;© 2026 EventOps AI — Autonomous Event Management Intelligence Platform&lt;/span&gt;
+&lt;/div&gt;
+&lt;/footer&gt;
+&lt;!-- ====== SCRIPTS ====== --&gt;
+&lt;script
+src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+&lt;!-- Custom JavaScript (optional) --&gt;
+&lt;script src=&quot;{{ url_for(&#39;static&#39;, filename=&#39;js/script.js&#39;) }}&quot;&gt;&lt;/script&gt;
+{% block extra_js %}{% endblock %}
+&lt;/body&gt;
+&lt;/html&gt;
